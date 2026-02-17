@@ -244,6 +244,25 @@ class FortiGateMCPHTTPServer:
                 device_id, name, service_type, protocol, port, vdom
             )
 
+        # Network visibility tools
+        @self.mcp.tool(description="Get DHCP leases")
+        def get_dhcp_leases(device_id: str, vdom: Optional[str] = None):
+            return self.network_tools.get_dhcp_leases(device_id, vdom)
+
+        @self.mcp.tool(description="Get ARP table")
+        def get_arp_table(device_id: str, vdom: Optional[str] = None):
+            return self.network_tools.get_arp_table(device_id, vdom)
+
+        @self.mcp.tool(description="Get active firewall sessions")
+        def get_session_table(
+            device_id: str, count: int = 50, vdom: Optional[str] = None
+        ):
+            return self.network_tools.get_session_table(device_id, count, vdom)
+
+        @self.mcp.tool(description="Get detected device inventory")
+        def get_device_inventory(device_id: str, vdom: Optional[str] = None):
+            return self.network_tools.get_device_inventory(device_id, vdom)
+
         # Routing tools
         @self.mcp.tool(description="List static routes")
         def list_static_routes(device_id: str, vdom: Optional[str] = None):

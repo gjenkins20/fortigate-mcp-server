@@ -371,6 +371,27 @@ class FortiGateAPI:
         """Get detailed information for a specific virtual IP."""
         return self._make_request("GET", f"cmdb/firewall/vip/{vip_name}", vdom=vdom)
 
+    # Network visibility endpoints
+    def get_dhcp_leases(self, vdom: Optional[str] = None) -> Dict[str, Any]:
+        """Get DHCP lease information."""
+        return self._make_request("GET", "monitor/system/dhcp", vdom=vdom)
+
+    def get_arp_table(self, vdom: Optional[str] = None) -> Dict[str, Any]:
+        """Get ARP table entries."""
+        return self._make_request("GET", "monitor/network/arp", vdom=vdom)
+
+    def get_session_table(
+        self, count: int = 50, vdom: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """Get active firewall session table."""
+        return self._make_request(
+            "GET", "monitor/firewall/session", params={"count": count}, vdom=vdom
+        )
+
+    def get_device_inventory(self, vdom: Optional[str] = None) -> Dict[str, Any]:
+        """Get detected device inventory."""
+        return self._make_request("GET", "monitor/user/device/query", vdom=vdom)
+
 
 class FortiGateManager:
     """Manager for multiple FortiGate devices.

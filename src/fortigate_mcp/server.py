@@ -38,10 +38,14 @@ from .tools.definitions import (
     DELETE_STATIC_ROUTE_DESC,
     DELETE_VIRTUAL_IP_DESC,
     DISCOVER_VDOMS_DESC,
+    GET_ARP_TABLE_DESC,
+    GET_DEVICE_INVENTORY_DESC,
     GET_DEVICE_STATUS_DESC,
+    GET_DHCP_LEASES_DESC,
     GET_INTERFACE_STATUS_DESC,
     GET_ROUTING_TABLE_DESC,
     GET_SERVER_INFO_DESC,
+    GET_SESSION_TABLE_DESC,
     GET_STATIC_ROUTE_DETAIL_DESC,
     GET_VIRTUAL_IP_DETAIL_DESC,
     HEALTH_CHECK_DESC,
@@ -270,6 +274,47 @@ class FortiGateMCPServer:
             return self.network_tools.create_service_object(
                 device_id, service_data, vdom
             )
+
+        # Network visibility tools
+        @self.mcp.tool(description=GET_DHCP_LEASES_DESC)
+        async def get_dhcp_leases(
+            device_id: Annotated[str, Field(description="FortiGate device identifier")],
+            vdom: Annotated[
+                Optional[str], Field(description="Virtual Domain", default=None)
+            ] = None,
+        ):
+            return self.network_tools.get_dhcp_leases(device_id, vdom)
+
+        @self.mcp.tool(description=GET_ARP_TABLE_DESC)
+        async def get_arp_table(
+            device_id: Annotated[str, Field(description="FortiGate device identifier")],
+            vdom: Annotated[
+                Optional[str], Field(description="Virtual Domain", default=None)
+            ] = None,
+        ):
+            return self.network_tools.get_arp_table(device_id, vdom)
+
+        @self.mcp.tool(description=GET_SESSION_TABLE_DESC)
+        async def get_session_table(
+            device_id: Annotated[str, Field(description="FortiGate device identifier")],
+            count: Annotated[
+                int,
+                Field(description="Maximum number of sessions to return", default=50),
+            ] = 50,
+            vdom: Annotated[
+                Optional[str], Field(description="Virtual Domain", default=None)
+            ] = None,
+        ):
+            return self.network_tools.get_session_table(device_id, count, vdom)
+
+        @self.mcp.tool(description=GET_DEVICE_INVENTORY_DESC)
+        async def get_device_inventory(
+            device_id: Annotated[str, Field(description="FortiGate device identifier")],
+            vdom: Annotated[
+                Optional[str], Field(description="Virtual Domain", default=None)
+            ] = None,
+        ):
+            return self.network_tools.get_device_inventory(device_id, vdom)
 
         # Routing tools
         @self.mcp.tool(description=LIST_STATIC_ROUTES_DESC)

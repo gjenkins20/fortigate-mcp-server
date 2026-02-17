@@ -191,6 +191,30 @@ class FortiGateFormatters:
         return [Content(type="text", text=formatted_text)]
 
     @staticmethod
+    def format_dhcp_leases(dhcp_data: Dict[str, Any]) -> List[Content]:
+        """Format DHCP leases response."""
+        formatted_text = FortiGateTemplates.dhcp_leases(dhcp_data)
+        return [Content(type="text", text=formatted_text)]
+
+    @staticmethod
+    def format_arp_table(arp_data: Dict[str, Any]) -> List[Content]:
+        """Format ARP table response."""
+        formatted_text = FortiGateTemplates.arp_table(arp_data)
+        return [Content(type="text", text=formatted_text)]
+
+    @staticmethod
+    def format_session_table(session_data: Dict[str, Any]) -> List[Content]:
+        """Format session table response."""
+        formatted_text = FortiGateTemplates.session_table(session_data)
+        return [Content(type="text", text=formatted_text)]
+
+    @staticmethod
+    def format_device_inventory(inventory_data: Dict[str, Any]) -> List[Content]:
+        """Format device inventory response."""
+        formatted_text = FortiGateTemplates.device_inventory(inventory_data)
+        return [Content(type="text", text=formatted_text)]
+
+    @staticmethod
     def format_operation_result(
         operation: str,
         device_id: str,

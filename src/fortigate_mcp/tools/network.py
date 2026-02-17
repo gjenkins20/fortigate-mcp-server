@@ -94,6 +94,54 @@ class NetworkTools(FortiGateTool):
         except Exception as e:
             return self._handle_error("create service object", device_id, e)
 
+    def get_dhcp_leases(
+        self, device_id: str, vdom: Optional[str] = None
+    ) -> List[Content]:
+        """Get DHCP leases."""
+        try:
+            self._validate_device_exists(device_id)
+            api_client = self._get_device_api(device_id)
+            data = api_client.get_dhcp_leases(vdom=vdom)
+            return self._format_response(data, "dhcp_leases")
+        except Exception as e:
+            return self._handle_error("get DHCP leases", device_id, e)
+
+    def get_arp_table(
+        self, device_id: str, vdom: Optional[str] = None
+    ) -> List[Content]:
+        """Get ARP table."""
+        try:
+            self._validate_device_exists(device_id)
+            api_client = self._get_device_api(device_id)
+            data = api_client.get_arp_table(vdom=vdom)
+            return self._format_response(data, "arp_table")
+        except Exception as e:
+            return self._handle_error("get ARP table", device_id, e)
+
+    def get_session_table(
+        self, device_id: str, count: int = 50, vdom: Optional[str] = None
+    ) -> List[Content]:
+        """Get active session table."""
+        try:
+            self._validate_device_exists(device_id)
+            api_client = self._get_device_api(device_id)
+            data = api_client.get_session_table(count=count, vdom=vdom)
+            return self._format_response(data, "session_table")
+        except Exception as e:
+            return self._handle_error("get session table", device_id, e)
+
+    def get_device_inventory(
+        self, device_id: str, vdom: Optional[str] = None
+    ) -> List[Content]:
+        """Get detected device inventory."""
+        try:
+            self._validate_device_exists(device_id)
+            api_client = self._get_device_api(device_id)
+            data = api_client.get_device_inventory(vdom=vdom)
+            return self._format_response(data, "device_inventory")
+        except Exception as e:
+            return self._handle_error("get device inventory", device_id, e)
+
     def get_schema_info(self) -> Dict[str, Any]:
         """Get schema information for network tools.
 

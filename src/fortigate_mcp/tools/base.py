@@ -125,6 +125,14 @@ class FortiGateTool:
             return FortiGateFormatters.format_interfaces(data)
         elif resource_type == "vdoms":
             return FortiGateFormatters.format_vdoms(data)
+        elif resource_type == "dhcp_leases":
+            return FortiGateFormatters.format_dhcp_leases(data)
+        elif resource_type == "arp_table":
+            return FortiGateFormatters.format_arp_table(data)
+        elif resource_type == "session_table":
+            return FortiGateFormatters.format_session_table(data)
+        elif resource_type == "device_inventory":
+            return FortiGateFormatters.format_device_inventory(data)
         else:
             # Fallback to JSON formatting for unknown types
             return FortiGateFormatters.format_json_response(data)

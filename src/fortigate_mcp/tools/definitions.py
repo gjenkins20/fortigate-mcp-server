@@ -608,6 +608,78 @@ Returns:
 - Error conditions if any
 """
 
+# Network Visibility Tool Descriptions
+GET_DHCP_LEASES_DESC = """
+Get DHCP lease information from a FortiGate device.
+
+This tool retrieves all current DHCP leases managed by the FortiGate device,
+showing which IP addresses have been assigned to which devices.
+
+Parameters:
+- device_id: Identifier of the FortiGate device
+- vdom: Virtual Domain name (optional, uses device default)
+
+Returns:
+- Leased IP addresses
+- Client MAC addresses and hostnames
+- Lease status and expiration times
+- Associated interfaces
+"""
+
+GET_ARP_TABLE_DESC = """
+Get the ARP table from a FortiGate device.
+
+This tool retrieves the Address Resolution Protocol table showing
+the mapping between IP addresses and MAC addresses on the network.
+
+Parameters:
+- device_id: Identifier of the FortiGate device
+- vdom: Virtual Domain name (optional, uses device default)
+
+Returns:
+- IP address to MAC address mappings
+- Associated network interfaces
+- Entry age information
+"""
+
+GET_SESSION_TABLE_DESC = """
+Get active firewall sessions from a FortiGate device.
+
+This tool retrieves the current session table showing active network
+connections passing through the firewall, including source/destination
+addresses, protocols, and traffic statistics.
+
+Parameters:
+- device_id: Identifier of the FortiGate device
+- count: Maximum number of sessions to return (default: 50)
+- vdom: Virtual Domain name (optional, uses device default)
+
+Returns:
+- Protocol and connection details
+- Source and destination addresses with ports
+- Associated firewall policy IDs
+- Traffic statistics (bytes sent/received)
+- Session duration
+"""
+
+GET_DEVICE_INVENTORY_DESC = """
+Get the detected device inventory from a FortiGate device.
+
+This tool retrieves information about all devices detected on the network
+by the FortiGate, including device types, vendors, and online status.
+
+Parameters:
+- device_id: Identifier of the FortiGate device
+- vdom: Virtual Domain name (optional, uses device default)
+
+Returns:
+- Device IP and MAC addresses
+- Hardware vendor identification
+- Device type classification
+- Online/offline status
+- Detection interface
+"""
+
 GET_SERVER_INFO_DESC = """
 Get detailed information about the FortiGate MCP server.
 

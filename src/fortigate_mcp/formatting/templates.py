@@ -689,6 +689,148 @@ class FortiGateTemplates:
         return "\n".join(lines)
 
     @staticmethod
+    def dhcp_leases(dhcp_data: Dict[str, Any]) -> str:
+        """Format DHCP lease information.
+
+        Args:
+            dhcp_data: DHCP leases response from FortiGate API
+
+        Returns:
+            Formatted DHCP lease information
+        """
+        lines = ["DHCP Leases", ""]
+
+        if "results" in dhcp_data and dhcp_data["results"]:
+            leases = dhcp_data["results"]
+
+            for lease in leases:
+                lines.append(f"Lease: {lease.get('ip', 'N/A')}")
+                lines.append(f"  MAC: {lease.get('mac', 'N/A')}")
+                lines.append(f"  Hostname: {lease.get('hostname', 'Unknown')}")
+                lines.append(f"  Status: {lease.get('status', 'N/A')}")
+                lines.append(f"  Interface: {lease.get('interface', 'N/A')}")
+
+                expire_time = lease.get("expire_time")
+                if expire_time:
+                    try:
+                        expire_str = datetime.fromtimestamp(expire_time).strftime(
+                            "%Y-%m-%d %H:%M:%S"
+                        )
+                        lines.append(f"  Expires: {expire_str}")
+                    except (ValueError, OSError):
+                        lines.append(f"  Expires: {expire_time}")
+
+                lines.append("")
+        else:
+            lines.append("No DHCP leases found")
+
+        return "\n".join(lines)
+
+    @staticmethod
+    def arp_table(arp_data: Dict[str, Any]) -> str:
+        """Format ARP table information.
+
+        Args:
+            arp_data: ARP table response from FortiGate API
+
+        Returns:
+            Formatted ARP table information
+        """
+        lines = ["ARP Table", ""]
+
+        if "results" in arp_data and arp_data["results"]:
+            entries = arp_data["results"]
+
+            for entry in entries:
+                lines.append(f"Entry: {entry.get('ip', 'N/A')}")
+                lines.append(f"  MAC: {entry.get('mac', 'N/A')}")
+                lines.append(f"  Interface: {entry.get('interface', 'N/A')}")
+                lines.append(f"  Age: {entry.get('age', 'N/A')}")
+                lines.append("")
+        else:
+            lines.append("No ARP entries found")
+
+        return "\n".join(lines)
+
+    @staticmethod
+    def session_table(session_data: Dict[str, Any]) -> str:
+        """Format session table information.
+
+        Args:
+            session_data: Session table response from FortiGate API
+
+        Returns:
+            Formatted session table information
+        """
+        lines = ["Active Sessions", ""]
+
+        results = session_data.get("results", {})
+        sessions = results.get("details", []) if isinstance(results, dict) else results
+
+        if sessions:
+            for session in sessions:
+                proto = str(session.get("proto", "N/A"))
+                proto_num_map = {"6": "TCP", "17": "UDP", "1": "ICMP"}
+                proto_label = proto_num_map.get(proto, proto)
+
+                src = session.get("saddr", "N/A")
+                sport = session.get("sport", "")
+                dst = session.get("daddr", "N/A")
+                dport = session.get("dport", "")
+
+                src_str = f"{src}:{sport}" if sport else src
+                dst_str = f"{dst}:{dport}" if dport else dst
+
+                lines.append(f"Session: {proto_label} {src_str} -> {dst_str}")
+                lines.append(f"  Policy ID: {session.get('policyid', 'N/A')}")
+                lines.append(f"  Duration: {session.get('duration', 'N/A')}s")
+
+                sent = session.get("sentbyte", 0)
+                rcvd = session.get("rcvdbyte", 0)
+                lines.append(f"  Sent: {sent} bytes  Recv: {rcvd} bytes")
+                lines.append("")
+        else:
+            lines.append("No active sessions found")
+
+        return "\n".join(lines)
+
+    @staticmethod
+    def device_inventory(inventory_data: Dict[str, Any]) -> str:
+        """Format device inventory information.
+
+        Args:
+            inventory_data: Device inventory response from FortiGate API
+
+        Returns:
+            Formatted device inventory information
+        """
+        lines = ["Device Inventory", ""]
+
+        if "results" in inventory_data and inventory_data["results"]:
+            devices = inventory_data["results"]
+
+            for device in devices:
+                ip = device.get("ipv4_address", "N/A")
+                mac = device.get("mac", "N/A")
+                lines.append(f"Device: {ip} ({mac})")
+                lines.append(f"  Vendor: {device.get('hardware_vendor', 'Unknown')}")
+                lines.append(f"  Type: {device.get('device_type', 'Unknown')}")
+
+                is_online = device.get("is_online")
+                if is_online is not None:
+                    status = "Online" if is_online else "Offline"
+                    lines.append(f"  Status: {status}")
+
+                lines.append(
+                    f"  Interface: " f"{device.get('detected_interface', 'N/A')}"
+                )
+                lines.append("")
+        else:
+            lines.append("No devices found")
+
+        return "\n".join(lines)
+
+    @staticmethod
     def operation_result(
         operation: str,
         device_id: str,
