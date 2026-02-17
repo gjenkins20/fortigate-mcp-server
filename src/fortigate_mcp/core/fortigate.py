@@ -128,7 +128,7 @@ class FortiGateAPI:
                         error_data = response.json()
                         if "error" in error_data:
                             error_msg += f" - {error_data['error']}"
-                    except:
+                    except Exception:
                         error_msg += f" - {response.text}"
                     
                     raise FortiGateAPIError(

@@ -26,7 +26,7 @@ classifiers = [
 keywords = ["fortigate", "mcp", "fastmcp", "firewall", "management", "automation"]
 requires-python = ">=3.11"
 dependencies = [
-    "mcp @ git+https://github.com/modelcontextprotocol/python-sdk.git",
+    "mcp>=1.0.0,<2.0.0",
     "fastmcp>=0.2.0",
     "httpx>=0.24.0",
     "pydantic>=2.0.0",
@@ -70,7 +70,7 @@ Repository = "https://github.com/your-username/fortigate-mcp-server"
 "Bug Tracker" = "https://github.com/your-username/fortigate-mcp-server/issues"
 
 [project.scripts]
-fortigate-mcp-server = "src.main:main"
+fortigate-mcp-server = "src.fortigate_mcp.__main__:main"
 
 [tool.hatch.metadata]
 allow-direct-references = true

@@ -436,10 +436,10 @@ def main():
     try:
         command.handle(**options)
     except KeyboardInterrupt:
-        print("\nShutting down gracefully...")
+        sys.stderr.write("\nShutting down gracefully...\n")
         sys.exit(0)
     except Exception as e:
-        print(f"Error: {e}")
+        sys.stderr.write(f"Error: {e}\n")
         sys.exit(1)
 
 

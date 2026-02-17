@@ -93,7 +93,35 @@ docker-compose up -d
 docker-compose logs -f fortigate-mcp-server
 ```
 
-## 🔧 Cursor MCP Integration
+## Claude Desktop Integration
+
+The FortiGate MCP Server works with the Claude Desktop App via STDIO transport.
+
+### Configuration
+
+Edit `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) or the equivalent path on your OS:
+
+```json
+{
+  "mcpServers": {
+    "fortigate-mcp": {
+      "command": "python",
+      "args": ["-m", "src.fortigate_mcp"],
+      "env": {
+        "FORTIGATE_MCP_CONFIG": "/path/to/your/config/config.json"
+      }
+    }
+  }
+}
+```
+
+> **Tip:** Use the full path to your Python executable (e.g., `/Users/you/.venv/bin/python`) if Claude Desktop cannot find `python` on its PATH.
+
+After saving the config, restart Claude Desktop. The FortiGate tools will appear automatically.
+
+See `examples/claude_desktop_config.json` for a ready-to-use template.
+
+## Cursor MCP Integration
 
 ### 1. Cursor MCP Configuration
 

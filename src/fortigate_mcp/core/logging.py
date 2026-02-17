@@ -49,7 +49,7 @@ def setup_logging(config: LoggingConfig) -> logging.Logger:
     
     # Setup console logging if enabled
     if config.console:
-        console_handler = logging.StreamHandler(sys.stdout)
+        console_handler = logging.StreamHandler(sys.stderr)
         console_handler.setLevel(log_level)
         console_handler.setFormatter(formatter)
         root_logger.addHandler(console_handler)
