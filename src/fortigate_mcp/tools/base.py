@@ -10,24 +10,27 @@ This module provides the foundation for all FortiGate MCP tools, including:
 All tool implementations inherit from the FortiGateTool base class to ensure
 consistent behavior and error handling across the MCP server.
 """
-import logging
+
 import time
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, List, Optional
+
 from mcp.types import TextContent as Content
+
 from ..core.fortigate import FortiGateAPI, FortiGateAPIError, FortiGateManager
 from ..core.logging import get_logger, log_tool_call
 from ..formatting import FortiGateFormatters
 
+
 class FortiGateTool:
     """Base class for FortiGate MCP tools.
-    
+
     This class provides common functionality used by all FortiGate tool implementations:
     - FortiGate device access through manager
     - Standardized logging
     - Response formatting
     - Error handling
     - Performance monitoring
-    
+
     All tool classes should inherit from this base class to ensure consistent
     behavior and error handling across the MCP server.
     """
@@ -43,23 +46,28 @@ class FortiGateTool:
 
     def _get_device_api(self, device_id: str) -> FortiGateAPI:
         """Get FortiGate API client for a device.
-        
+
         Args:
             device_id: Device identifier
-            
+
         Returns:
             FortiGateAPI client instance
-            
+
         Raises:
             ValueError: If device not found
         """
         try:
             return self.fortigate_manager.get_device(device_id)
-        except ValueError as e:
+        except ValueError:
             self.logger.error(f"Device {device_id} not found")
-            raise ValueError(f"Device '{device_id}' not found. Available devices: {list(self.fortigate_manager.devices.keys())}")
+            available = list(self.fortigate_manager.devices.keys())
+            raise ValueError(
+                f"Device '{device_id}' not found." f" Available devices: {available}"
+            )
 
-    def _format_response(self, data: Any, resource_type: Optional[str] = None, **kwargs) -> List[Content]:
+    def _format_response(
+        self, data: Any, resource_type: Optional[str] = None, **kwargs
+    ) -> List[Content]:
         """Format response data into MCP content using formatters.
 
         This method handles formatting of various FortiGate resource types into
@@ -69,7 +77,7 @@ class FortiGateTool:
         Args:
             data: Raw data from FortiGate API to format
             resource_type: Type of resource for formatter selection. Valid types:
-                         'devices', 'device_status', 'firewall_policies', 
+                         'devices', 'device_status', 'firewall_policies',
                          'address_objects', 'service_objects', 'static_routes',
                          'interfaces', 'vdoms'
 
@@ -81,8 +89,10 @@ class FortiGateTool:
             if isinstance(data, list):
                 # New format: list of device IDs
                 if not data:
-                    return [Content(type="text", text="📱 No FortiGate devices configured")]
-                
+                    return [
+                        Content(type="text", text="📱 No FortiGate devices configured")
+                    ]
+
                 lines = ["📱 **Registered FortiGate Devices**", ""]
                 for device_id in data:
                     lines.append(f"  • {device_id}")
@@ -99,9 +109,9 @@ class FortiGateTool:
         elif resource_type == "firewall_policies":
             return FortiGateFormatters.format_firewall_policies(data)
         elif resource_type == "firewall_policy_detail":
-            device_id = kwargs.get('device_id', 'unknown')
-            address_objects = kwargs.get('address_objects')
-            service_objects = kwargs.get('service_objects')
+            device_id = kwargs.get("device_id", "unknown")
+            address_objects = kwargs.get("address_objects")
+            service_objects = kwargs.get("service_objects")
             return FortiGateFormatters.format_firewall_policy_detail(
                 data, device_id, address_objects, service_objects
             )
@@ -119,7 +129,9 @@ class FortiGateTool:
             # Fallback to JSON formatting for unknown types
             return FortiGateFormatters.format_json_response(data)
 
-    def _handle_error(self, operation: str, device_id: str, error: Exception) -> List[Content]:
+    def _handle_error(
+        self, operation: str, device_id: str, error: Exception
+    ) -> List[Content]:
         """Handle and log errors from FortiGate operations.
 
         Provides standardized error handling across all tools by:
@@ -144,7 +156,9 @@ class FortiGateTool:
             if error.status_code == 401:
                 error_msg = "Authentication failed. Check device credentials."
             elif error.status_code == 403:
-                error_msg = "Permission denied. Insufficient privileges for this operation."
+                error_msg = (
+                    "Permission denied. Insufficient privileges for this operation."
+                )
             elif error.status_code == 404:
                 error_msg = "Resource not found. The specified item may not exist."
             elif error.status_code == 500:
@@ -157,25 +171,28 @@ class FortiGateTool:
             error_msg = "Operation timed out. Check network connectivity."
         elif "connection" in error_msg.lower():
             error_msg = "Connection failed. Check device network settings."
-        
-        return FortiGateFormatters.format_error_response(operation, device_id, error_msg)
 
-    async def _execute_with_logging(self, operation: str, device_id: str, 
-                                   func, *args, **kwargs) -> List[Content]:
+        return FortiGateFormatters.format_error_response(
+            operation, device_id, error_msg
+        )
+
+    async def _execute_with_logging(
+        self, operation: str, device_id: str, func, *args, **kwargs
+    ) -> List[Content]:
         """Execute a function with logging and error handling.
-        
+
         Args:
             operation: Operation description for logging
             device_id: Target device ID
             func: Function to execute
             *args: Positional arguments for function
             **kwargs: Keyword arguments for function
-            
+
         Returns:
             List of Content objects with operation result
         """
         start_time = time.time()
-        
+
         try:
             result = await func(*args, **kwargs)
             duration_ms = (time.time() - start_time) * 1000
@@ -188,23 +205,25 @@ class FortiGateTool:
 
     def _validate_device_exists(self, device_id: str) -> None:
         """Validate that a device exists.
-        
+
         Args:
             device_id: Device identifier to validate
-            
+
         Raises:
             ValueError: If device doesn't exist
         """
         if device_id not in self.fortigate_manager.devices:
             available = list(self.fortigate_manager.devices.keys())
-            raise ValueError(f"Device '{device_id}' not found. Available devices: {available}")
+            raise ValueError(
+                f"Device '{device_id}' not found. Available devices: {available}"
+            )
 
     def _validate_required_params(self, **params) -> None:
         """Validate that required parameters are provided.
-        
+
         Args:
             **params: Parameters to validate
-            
+
         Raises:
             ValueError: If any required parameter is missing
         """
@@ -212,18 +231,23 @@ class FortiGateTool:
             if value is None or (isinstance(value, str) and not value.strip()):
                 raise ValueError(f"Parameter '{name}' is required")
 
-    def _format_operation_result(self, operation: str, device_id: str, 
-                                success: bool, details: Optional[str] = None,
-                                error: Optional[str] = None) -> List[Content]:
+    def _format_operation_result(
+        self,
+        operation: str,
+        device_id: str,
+        success: bool,
+        details: Optional[str] = None,
+        error: Optional[str] = None,
+    ) -> List[Content]:
         """Format operation result.
-        
+
         Args:
             operation: Operation name
             device_id: Target device ID
             success: Whether operation succeeded
             details: Success details
             error: Error message if failed
-            
+
         Returns:
             List of Content objects with formatted result
         """
@@ -231,15 +255,16 @@ class FortiGateTool:
             operation, device_id, success, details, error
         )
 
-    def _format_connection_test(self, device_id: str, success: bool,
-                              error: Optional[str] = None) -> List[Content]:
+    def _format_connection_test(
+        self, device_id: str, success: bool, error: Optional[str] = None
+    ) -> List[Content]:
         """Format connection test result.
-        
+
         Args:
             device_id: Device identifier
             success: Whether connection succeeded
             error: Error message if failed
-            
+
         Returns:
             List of Content objects with formatted result
         """

@@ -2,12 +2,13 @@
 Pytest configuration and fixtures
 """
 
-import pytest
 import asyncio
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import MagicMock
 
-from src.fortigate_mcp.core.fortigate import FortiGateManager, FortiGateAPI
-from src.fortigate_mcp.config.models import FortiGateDeviceConfig, AuthConfig
+import pytest
+
+from src.fortigate_mcp.config.models import AuthConfig, FortiGateDeviceConfig
+from src.fortigate_mcp.core.fortigate import FortiGateAPI, FortiGateManager
 
 
 @pytest.fixture
@@ -26,61 +27,49 @@ def mock_fortigate_api():
     """Mock FortiGate API fixture"""
     mock_api = MagicMock(spec=FortiGateAPI)
     mock_api.device_id = "test_device"
-    
+
     # Mock config attribute
     mock_config = MagicMock()
     mock_config.host = "192.168.1.1"
     mock_config.vdom = "root"
     mock_api.config = mock_config
-    
+
     mock_api.auth_method = "basic"
-    
+
     # Default return values
     mock_api.get_system_status.return_value = {
         "hostname": "FortiGate",
         "version": "v7.0.0",
-        "status": "ok"
+        "status": "ok",
     }
-    
-    mock_api.get_vdoms.return_value = {
-        "results": [
-            {"name": "root", "enabled": True}
-        ]
-    }
-    
+
+    mock_api.get_vdoms.return_value = {"results": [{"name": "root", "enabled": True}]}
+
     mock_api.get_interfaces.return_value = {
         "results": [
             {"name": "port1", "status": "up"},
-            {"name": "port2", "status": "down"}
+            {"name": "port2", "status": "down"},
         ]
     }
-    
+
     mock_api.get_firewall_policies.return_value = {
-        "results": [
-            {"policyid": 1, "name": "Allow_HTTP", "action": "accept"}
-        ]
+        "results": [{"policyid": 1, "name": "Allow_HTTP", "action": "accept"}]
     }
-    
+
     mock_api.get_address_objects.return_value = {
-        "results": [
-            {"name": "test_addr", "subnet": "192.168.1.0/24"}
-        ]
+        "results": [{"name": "test_addr", "subnet": "192.168.1.0/24"}]
     }
-    
+
     mock_api.get_service_objects.return_value = {
-        "results": [
-            {"name": "HTTP", "tcp-portrange": "80"}
-        ]
+        "results": [{"name": "HTTP", "tcp-portrange": "80"}]
     }
-    
+
     mock_api.get_static_routes.return_value = {
-        "results": [
-            {"dst": "10.0.0.0/8", "gateway": "192.168.1.1"}
-        ]
+        "results": [{"dst": "10.0.0.0/8", "gateway": "192.168.1.1"}]
     }
-    
+
     mock_api.test_connection.return_value = True
-    
+
     return mock_api
 
 
@@ -96,7 +85,7 @@ def sample_policy_data():
         "service": [{"name": "ALL"}],
         "action": "accept",
         "schedule": "always",
-        "comments": "Test policy created by pytest"
+        "comments": "Test policy created by pytest",
     }
 
 
@@ -106,7 +95,7 @@ def sample_address_data():
     return {
         "name": "test_address",
         "subnet": "192.168.1.0/24",
-        "comments": "Test address object"
+        "comments": "Test address object",
     }
 
 
@@ -117,7 +106,7 @@ def sample_service_data():
         "name": "test_service",
         "protocol": "TCP/UDP/SCTP",
         "tcp-portrange": "8080",
-        "comments": "Test service object"
+        "comments": "Test service object",
     }
 
 
@@ -128,7 +117,7 @@ def sample_route_data():
         "dst": "10.0.0.0/8",
         "gateway": "192.168.1.1",
         "device": "port1",
-        "comment": "Test static route"
+        "comment": "Test static route",
     }
 
 
@@ -150,5 +139,5 @@ def device_config():
         vdom="root",
         verify_ssl=False,
         timeout=30,
-        port=443
+        port=443,
     )

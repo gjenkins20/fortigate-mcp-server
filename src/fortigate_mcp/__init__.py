@@ -8,7 +8,7 @@ for integration with MCP-compatible clients like Cursor IDE.
 Key features:
 - Device management and configuration
 - Firewall policy operations
-- Network object management  
+- Network object management
 - Routing configuration
 - System monitoring and health checks
 
@@ -25,6 +25,6 @@ from .server import FortiGateMCPServer
 from .server_http import FortiGateMCPHTTPServer
 
 __all__ = [
-    "FortiGateMCPServer", 
+    "FortiGateMCPServer",
     "FortiGateMCPHTTPServer",
 ]

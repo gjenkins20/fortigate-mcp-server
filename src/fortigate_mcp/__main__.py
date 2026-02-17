@@ -4,6 +4,7 @@ Usage:
     python -m fortigate_mcp          # STDIO transport (for Claude Desktop)
     python -m fortigate_mcp --http   # HTTP transport
 """
+
 import os
 import sys
 

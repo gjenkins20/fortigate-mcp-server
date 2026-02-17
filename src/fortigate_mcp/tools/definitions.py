@@ -558,6 +558,24 @@ Returns:
 - Rule priorities
 """
 
+GET_INTERFACE_STATUS_DESC = """
+Get the status of a specific network interface on a FortiGate device.
+
+This tool retrieves detailed status information for a single network
+interface, including link state, IP configuration, and traffic statistics.
+
+Parameters:
+- device_id: Identifier of the FortiGate device
+- interface_name: Name of the interface to query
+- vdom: Virtual Domain name (optional, uses device default)
+
+Returns:
+- Interface link status (up/down)
+- IP address configuration
+- Traffic statistics
+- Speed and duplex settings
+"""
+
 LIST_INTERFACES_DESC = """
 List all network interfaces configured on a FortiGate device.
 

@@ -10,8 +10,8 @@ from .virtual_ip import VirtualIPTools
 __all__ = [
     "FortiGateTool",
     "DeviceTools",
-    "FirewallTools", 
+    "FirewallTools",
     "NetworkTools",
     "RoutingTools",
-    "VirtualIPTools"
+    "VirtualIPTools",
 ]
