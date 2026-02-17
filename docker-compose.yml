@@ -30,6 +30,13 @@ services:
     image: nginx:alpine
     container_name: fortigate-mcp-nginx
     restart: unless-stopped
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /var/cache/nginx
+      - /var/run
+      - /tmp
     ports:
       - "80:80"
       - "443:443"
